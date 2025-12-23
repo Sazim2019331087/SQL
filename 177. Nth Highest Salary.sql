@@ -1,0 +1,54 @@
+# Problem statement:
+  --------------------
+Write a solution to find the nth highest distinct salary from the Employee table. If there are less than n distinct salaries, return null.
+The result format is in the following example.
+
+# Table schema:
+  -----------------
+Table: Employee
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| id          | int  |
+| salary      | int  |
++-------------+------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains information about the salary of an employee.
+  
+# Input:
+  -------------------------
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+n = 2
+
+# Output:
+  -------------------------
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+
+# Solution:
+  --------------------------
+CREATE FUNCTION getNthHighestSalary(N IN NUMBER) RETURN NUMBER IS
+result NUMBER;
+BEGIN
+    /* Write your PL/SQL query statement below */
+    SELECT MAX(SALARY)
+    INTO result
+    FROM (
+        SELECT SALARY,
+        DENSE_RANK() OVER(ORDER BY SALARY DESC) as rnk
+        FROM EMPLOYEE    
+    )
+    WHERE rnk = N;
+    RETURN result;
+END;
